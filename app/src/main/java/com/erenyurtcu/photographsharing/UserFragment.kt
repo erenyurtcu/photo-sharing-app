@@ -5,16 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.Navigation
 import com.erenyurtcu.photographsharing.databinding.FragmentUserBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class UserFragment : Fragment() {
 
     private var _binding: FragmentUserBinding? = null
     private val binding get() = _binding!!
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
     }
 
     override fun onCreateView(
@@ -32,12 +38,34 @@ class UserFragment : Fragment() {
         binding.signupButton.setOnClickListener { signUp(it) }
     }
 
-    fun logIn(view: View){
-    }
-
     fun signUp(view: View){
-        val action = UserFragmentDirections.actionUserFragmentToFeedFragment()
-        Navigation.findNavController(view).navigate(action)
+
+        val email = binding.emailText.text.toString()
+        val password = binding.passwordText.text.toString()
+
+        if(email.isNotEmpty() && password.isNotEmpty()){
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    val action = UserFragmentDirections.actionUserFragmentToFeedFragment()
+                    Navigation.findNavController(view).navigate(action)
+                }
+            }.addOnFailureListener { exception ->
+                Toast.makeText(requireContext(), exception.localizedMessage, Toast.LENGTH_LONG)
+                    .show()
+                }
+            }else{
+            Toast.makeText(
+                    requireContext(),
+                    "Please fill in all fields.",
+                    Toast.LENGTH_SHORT,
+                ).show()
+
+            }
+        }
+
+    fun logIn(view: View){
+
     }
 
     override fun onDestroyView() {
