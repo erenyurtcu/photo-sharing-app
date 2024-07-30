@@ -28,8 +28,17 @@ class UploadFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.uploadButton.setOnClickListener { upload(it) }
+        binding.uploadImageView.setOnClickListener { selectImage(it) }
     }
 
+    fun upload(view: View){
+
+    }
+
+    fun selectImage(view: View){
+
+    }
 
 
     override fun onDestroyView() {

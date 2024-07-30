@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import com.erenyurtcu.photographsharing.databinding.FragmentUserBinding
 
 class UserFragment : Fragment() {
@@ -32,11 +33,11 @@ class UserFragment : Fragment() {
     }
 
     fun logIn(view: View){
-
     }
 
     fun signUp(view: View){
-
+        val action = UserFragmentDirections.actionUserFragmentToFeedFragment()
+        Navigation.findNavController(view).navigate(action)
     }
 
     override fun onDestroyView() {
