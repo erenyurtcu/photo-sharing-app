@@ -1,4 +1,4 @@
-package com.erenyurtcu.photographsharing
+package com.erenyurtcu.photographsharing.view
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
@@ -21,12 +21,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import com.erenyurtcu.photographsharing.databinding.FragmentUploadBinding
-import com.erenyurtcu.photographsharing.databinding.FragmentUserBinding
 import com.google.android.material.snackbar.Snackbar
-import com.google.api.Context
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore

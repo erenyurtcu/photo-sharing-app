@@ -1,4 +1,4 @@
-package com.erenyurtcu.photographsharing
+package com.erenyurtcu.photographsharing.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

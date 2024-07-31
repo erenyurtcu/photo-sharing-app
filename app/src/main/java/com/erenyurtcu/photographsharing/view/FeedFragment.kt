@@ -1,18 +1,24 @@
-package com.erenyurtcu.photographsharing
+package com.erenyurtcu.photographsharing.view
 
 import android.os.Bundle
-import android.text.Layout.Directions
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.erenyurtcu.photographsharing.model.Post
+import com.erenyurtcu.photographsharing.R
+import com.erenyurtcu.photographsharing.adapter.PostAdapter
 import com.erenyurtcu.photographsharing.databinding.FragmentFeedBinding
-import com.erenyurtcu.photographsharing.databinding.FragmentUserBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class FeedFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
@@ -22,10 +28,14 @@ class FeedFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
     private lateinit var popup : PopupMenu
 
     private lateinit var auth : FirebaseAuth
+    private lateinit var db :FirebaseFirestore
+    val postList : ArrayList<Post> = arrayListOf()
+    private var adapter : PostAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        db = Firebase.firestore
     }
 
     override fun onCreateView(
@@ -41,6 +51,37 @@ class FeedFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         binding.floatingActionButton.setOnClickListener { floatingButtonClicked(it) }
 
+        fireStoreGetData()
+
+        adapter = PostAdapter(postList)
+        binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.feedRecyclerView.adapter = adapter
+    }
+
+    private fun fireStoreGetData(){
+        db.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener { value, error ->
+            if (error != null) {
+                Toast.makeText(requireContext(),error.localizedMessage,Toast.LENGTH_LONG).show()
+            }else{
+                if (value != null) {
+                    if(!value.isEmpty){
+                        postList.clear()
+
+                        val documents = value.documents
+
+                        for(document in documents){
+                            val comment = document.get("comment") as String
+                            val email = document.get("email") as String
+                            val downloadUrl = document.get("downloadUrl") as String
+
+                            val post = Post(comment,email, downloadUrl)
+                            postList.add(post)
+                        }
+                        adapter?.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
     }
 
     fun floatingButtonClicked(view: View){
