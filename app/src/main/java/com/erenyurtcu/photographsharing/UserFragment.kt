@@ -36,6 +36,13 @@ class UserFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.loginButton.setOnClickListener { logIn(it) }
         binding.signupButton.setOnClickListener { signUp(it) }
+
+        val _currentUser = auth.currentUser
+        if (_currentUser != null) {
+            val action = UserFragmentDirections.actionUserFragmentToFeedFragment()
+            Navigation.findNavController(view).navigate(action)
+
+        }
     }
 
     fun signUp(view: View){
@@ -65,6 +72,17 @@ class UserFragment : Fragment() {
         }
 
     fun logIn(view: View){
+        val email = binding.emailText.text.toString()
+        val password = binding.passwordText.text.toString()
+
+        if(email.isNotEmpty() && password.isNotEmpty()) {
+            auth.signInWithEmailAndPassword(email,password).addOnSuccessListener {
+                val action = UserFragmentDirections.actionUserFragmentToFeedFragment()
+                Navigation.findNavController(view).navigate(action)
+            }.addOnFailureListener { exception ->
+                Toast.makeText(requireContext(),exception.localizedMessage,Toast.LENGTH_LONG).show()
+            }
+        }
 
     }
 
